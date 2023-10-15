@@ -1,0 +1,3 @@
+"""
+Fonksiyonları buraya yazabilirsiniz.
+"""
