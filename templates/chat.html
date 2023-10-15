@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div id="card">
+    <h2 class="centered-title">ZelTech AI Asistan | AFAD Afet Asistanı</h2>
+    <ul id="messages"></ul>
+    <div id="messageInput" class="input-group">
+        <input type="text" id="input" class="form-control" placeholder="Mesajınızı yazın..." aria-label="Mesajınızı yazın..." aria-describedby="sendButton">
+        <button id="sendButton" class="btn btn-primary rounded-circle" type="button">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<!-- JavaScripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script src="../static/js/chat.js"></script>
+
+{% endblock %}

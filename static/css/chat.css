@@ -1,0 +1,96 @@
+#card {
+    width: 90%;
+    margin: 3% auto;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 0 0 3px 3px;
+}
+
+h2.centered-title {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    font-weight: 700;
+    color: #2C3E50;
+    border-bottom: 3px solid #3498DB;
+    display: inline-block;
+    font-size: 1.5em;
+}
+
+#messages {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 0;
+    list-style-type: none;
+}
+
+.user-message, .bot-message {
+    padding: 10px 15px;
+    margin: 10px 20px;
+    border-radius: 20px;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #007bff;
+    color: #fff;
+    float: right;
+    clear: both;
+}
+
+.bot-message {
+    background-color: #28a745;
+    color: #fff;
+    float: left;
+    clear: both;
+}
+
+.user-message::before {
+    content: '\f007';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+.bot-message::before {
+    content: '\f544';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+}
+
+#messageInput {
+    position: fixed;
+    width: 86%;
+    bottom: 0;
+    left: 7%;  /* Div'i ekranın alt ortasına getirir */
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+#input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#sendButton {
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+#sendButton:hover {
+    background-color: #0056b3;
+}
