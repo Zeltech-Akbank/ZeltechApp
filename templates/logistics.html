@@ -1,77 +1,66 @@
 {% extends "layout.html" %}
+{% block navbar %}
+{% endblock %}
 {% block body %}
-    <style>
-    .card{
+<style>
+    .card {
         margin: 10px 0 10px 0;
     }
-    </style>
+</style>
 
 <div class="container">
-
-  <form action="/form-submit" method="post">
+    <form action="/form-submit" method="post">
         <div class="row">
-      <div class="col">
-          <div class="card card1">
-          <div class="card-body">
-              <h2>Gönderen Bilgileri</h2>
-        <div class="mb-3">
-          <label for="gonderici-adi">Gönderici Adı-soyadi</label>
-          <input type="text" class="form-control" id="gonderici-adi" name="gonderici-adi" required placeholder="İsim Soyisim">
+            <div class="col">
+                <div class="card card1">
+                    <div class="card-body">
+                        <h2>Gönderen Bilgileri</h2>
+                        <div class="mb-3">
+                            <label for="gonderici-adi">Gönderici Adı-soyadi</label>
+                            <input type="text" class="form-control" id="gonderici-adi" name="gonderici-adi" required placeholder="İsim Soyisim">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderici-telefonu">Gönderici Telefonu</label>
+                            <input type="tel" class="form-control" id="gonderici-telefonu" name="gonderici-telefonu" required placeholder="555 555 55 55">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderim-tarihi">Gönderim Tarihi</label>
+                            <input type="date" class="form-control" id="gonderim-tarihi" name="gonderim-tarihi" required placeholder="2023-10-16">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahmini-teslimat-tarihi">Tahmini Teslimat Tarihi</label>
+                            <input type="date" class="form-control" id="tahmini-teslimat-tarihi" name="tahmini-teslimat-tarihi" required placeholder="2023-10-17">
+                        </div>
+                    </div>
+                </div>
+                <div class="card card2">
+                    <div class="card-body">
+                        <h2>Araç Bilgileri</h2>
+                        <div class="mb-3">
+                            <label for="sofor-adi">Şoför Adı</label>
+                            <input type="text" class="form-control" id="sofor-adi" name="sofor-adi" required placeholder="İsim Soyisim">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sofor-cep-telefonu">Şoför Cep Telefonu</label>
+                            <input type="tel" class="form-control" id="sofor-cep-telefonu" name="sofor-cep-telefonu" required placeholder="533 533 53 33">
+                        </div>
+                        <div class="mb-3">
+                            <label for="plaka">Plaka</label>
+                            <input type="text" class="form-control" id="plaka" name="plaka" required placeholder="34 ABC 123">
+                        </div>
+                        <div class="mb-3">
+                            <label for="yardim-durumu">Yardım Durumu</label>
+                            <select class="form-control" id="yardim-durumu" name="yardim-durumu" required>
+                                <option value="Yolda">Yolda</option>
+                                <option value="Hazırlanıyor">Hazırlanıyor</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-          <label for="gonderici-telefonu">Gönderici Telefonu</label>
-          <input type="tel" class="form-control" id="gonderici-telefonu" name="gonderici-telefonu" required placeholder="555 555 55 55">
-        </div>
-
-        <div class="mb-3">
-          <label for="gonderim-tarihi">Gönderim Tarihi</label>
-          <input type="date" class="form-control" id="gonderim-tarihi" name="gonderim-tarihi" required placeholder="2023-10-16">
-        </div>
-
-        <div class="mb-3">
-          <label for="tahmini-teslimat-tarihi">Tahmini Teslimat Tarihi</label>
-          <input type="date" class="form-control" id="tahmini-teslimat-tarihi" name="tahmini-teslimat-tarihi" required placeholder="2023-10-17">
-        </div>
-
-          </div>
-        </div>
-          <div class="card card2">
-          <div class="card-body">
-
-              <h2>Araç Bilgileri</h2>
-
-        <div class="mb-3">
-          <label for="sofor-adi">Şoför Adı</label>
-          <input type="text" class="form-control" id="sofor-adi" name="sofor-adi" required placeholder="İsim Soyisim">
-        </div>
-
-        <div class="mb-3">
-          <label for="sofor-cep-telefonu">Şoför Cep Telefonu</label>
-          <input type="tel" class="form-control" id="sofor-cep-telefonu" name="sofor-cep-telefonu" required placeholder="533 533 53 33">
-        </div>
-
-        <div class="mb-3">
-          <label for="plaka">Plaka</label>
-          <input type="text" class="form-control" id="plaka" name="plaka" required placeholder="34 ABC 123">
-        </div>
-
-        <div class="mb-3">
-          <label for="yardim-durumu">Yardım Durumu</label>
-          <select class="form-control" id="yardim-durumu" name="yardim-durumu" required>
-            <option value="Yolda">Yolda</option>
-            <option value="Hazırlanıyor">Hazırlanıyor</option>
-          </select>
-        </div>
-
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </form>
-
+    </form>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
