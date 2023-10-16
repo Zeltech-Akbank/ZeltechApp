@@ -12,12 +12,12 @@ $(document).ready(function() {
     });
 
     function convertLinks(message) {
-        var urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(\/[^\s]*)?)/g;
+    var urlRegex = /(https?:\/\/[^\s)]+|www\.[^\s)]+|[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(\/[^\s)]*)?)/g;
 
-        return message.replace(urlRegex, function(url) {
-            var prefixedUrl = url.match(/^https?:\/\//) ? url : 'http://' + url;
-            return '<a href="' + prefixedUrl + '" target="_blank">' + url + '</a>';
-        });
+    return message.replace(urlRegex, function(url) {
+        var prefixedUrl = url.match(/^https?:\/\//) ? url : 'http://' + url;
+        return '<a href="' + prefixedUrl + '" target="_blank">' + url + '</a>';
+    });
     }
 
 
