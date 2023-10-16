@@ -36,7 +36,7 @@ class ChatSession:
 class RequestManager:
     HEADERS = {
         'Content-Type': 'application/json',
-        'azureml-model-deployment': 'afad-app'
+        'azureml-model-deployment': 'zeltech-afad-app-1'
     }
 
     def __init__(self, settings, session):
