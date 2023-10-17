@@ -49,7 +49,7 @@ def form_submit():
     print(f'Plaka: {plaka}')
     print(f'Yardım Durumu: {yardim_durumu}')
 
-    return render_template('logistics.html')
+    return render_template('admin_panel.html')
 
 
 @chat.route('/logistic-review')
