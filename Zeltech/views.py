@@ -81,6 +81,11 @@ def logistics_review():
     return render_template('logistics_review.html', items=items)
 
 
+@chat.route('/maps')
+def get_maps():
+    return render_template('maps.html')
+
+
 @socketio.on('user_message')
 def handle_user_message(message):
     print("Message received:", message)

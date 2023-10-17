@@ -30,7 +30,16 @@ $(document).ready(function(){
 
         $("#menu3").click(function(event){
         event.preventDefault();
-        $("#content").html("<h3>Menu 3 İçeriği</h3>");
+        $.ajax({
+            url: 'maps',
+            type: 'GET',
+            success: function(response) {
+                $("#content").html(response);
+            },
+            error: function() {
+                $("#content").html('<p>Hata oluştu.</p>');
+            }
+        });
     });
 });
 
