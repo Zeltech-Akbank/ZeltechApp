@@ -28,10 +28,26 @@ $(document).ready(function(){
         });
     });
 
-        $("#menu3").click(function(event){
+    $("#menu3").click(function(event){
+    event.preventDefault();
+    $.ajax({
+        url: 'maps',
+        type: 'GET',
+        success: function(response) {
+            $("#content").html(response);
+        },
+        error: function() {
+            $("#content").html('<p>Hata oluştu.</p>');
+        }
+    });
+
+
+});
+
+    $("#menu4").click(function(event){
         event.preventDefault();
         $.ajax({
-            url: 'maps',
+            url: 'voluntarily',
             type: 'GET',
             success: function(response) {
                 $("#content").html(response);

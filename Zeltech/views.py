@@ -1,6 +1,8 @@
 from flask import render_template, request
 from flask_socketio import SocketIO
 from . import chat
+from flask import jsonify
+
 
 
 from .controllers import Settings, ChatSession, RequestManager
@@ -84,6 +86,31 @@ def logistics_review():
 @chat.route('/maps')
 def get_maps():
     return render_template('maps.html')
+
+
+# Dummy veri
+ihbarlar = [
+    {'id': 1, 'isim': 'Ahmet', 'konu': 'Sorun A', 'detay': 'Detay A'},
+    {'id': 2, 'isim': 'Mehmet', 'konu': 'Sorun B', 'detay': 'Detay B'}
+]
+
+
+@chat.route('/voluntarily')
+def afad_voluntarily():
+    return render_template('voluntarily.html', ihbarlar=ihbarlar)
+
+
+@chat.route('/duzenle/<int:id>', methods=['POST'])
+def duzenle(id):
+    global ihbarlar
+    for ihbar in ihbarlar:
+        if ihbar['id'] == id:
+            ihbar['teyit'] = request.form.get('teyit')
+            ihbar['karsilandi'] = request.form.get('karsilandi')
+            break
+
+    print(ihbarlar)  # Tüm ihbarların son durumunu konsola yazdır
+    return jsonify({'status': 'success'})
 
 
 @socketio.on('user_message')
