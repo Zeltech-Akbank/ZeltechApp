@@ -2,10 +2,8 @@ from flask import render_template, request
 from flask_socketio import SocketIO
 from . import chat
 from flask import jsonify
-
-
-
 from .controllers import Settings, ChatSession, RequestManager
+
 
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -56,7 +54,6 @@ def form_submit():
 
 @chat.route('/logistic-review')
 def logistics_review():
-    # Örnek veri seti
     items = [
         {
             'gonderici_adi': 'Ahmet Yılmaz',
@@ -109,7 +106,7 @@ def duzenle(id):
             ihbar['karsilandi'] = request.form.get('karsilandi')
             break
 
-    print(ihbarlar)  # Tüm ihbarların son durumunu konsola yazdır
+    print(ihbarlar)
     return jsonify({'status': 'success'})
 
 

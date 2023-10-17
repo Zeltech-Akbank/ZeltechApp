@@ -20,29 +20,29 @@ $(document).on('click', '.duzenle', function() {
         }
     });
 });
-
-function filtreUygula() {
-    var teyitEvet = $("#filterTeyitEvet").is(':checked');
-    var karsilandiEvet = $("#filterKarsilandiEvet").is(':checked');
-
+function updateTable() {
     var searchValue = $("#searchInput").val().toLowerCase();
+
+    var teyitChecked = $("#filterTeyit").is(':checked');
+    var karsilandiChecked = $("#filterKarsilandi").is(':checked');
 
     $("tbody tr").each(function() {
         var currentRow = $(this);
-        var teyitValue = currentRow.find('.teyit').val();
-        var karsilandiValue = currentRow.find('.karsilandi').val();
+        var teyitValue = currentRow.find('.teyit').prop('checked');
+        var karsilandiValue = currentRow.find('.karsilandi').prop('checked');
 
+        var rowText = currentRow.text().toLowerCase();
         var showRow = true;
 
-        if (searchValue && !currentRow.text().toLowerCase().includes(searchValue)) {
+        if (searchValue && !rowText.includes(searchValue)) {
             showRow = false;
         }
 
-        if (teyitEvet && teyitValue !== 'Evet') {
+        if (teyitChecked && !teyitValue) {
             showRow = false;
         }
 
-        if (karsilandiEvet && karsilandiValue !== 'Evet') {
+        if (karsilandiChecked && !karsilandiValue) {
             showRow = false;
         }
 
@@ -54,4 +54,5 @@ function filtreUygula() {
     });
 }
 
-$("#searchInput").on("keyup", filtreUygula);  // Arama için keyup olayını dinle
+$("#searchInput").on('keyup', updateTable);
+$("#filterTeyit, #filterKarsilandi").on('change', updateTable);
