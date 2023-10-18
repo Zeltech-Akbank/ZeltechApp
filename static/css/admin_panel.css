@@ -1,0 +1,44 @@
+#sidebar {
+    background-color: #343a40;
+    color: white;
+    position: fixed;
+    width: 250px;
+    z-index: 2; /* Sidebar'ı öne getirebilmek için */
+    overflow-y: auto; /* İçeriği fazla olduğunda kaydırma çubuğunu göster */
+}
+
+#sidebar .nav-link {
+    color: white;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+main {
+    margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        width: 0;
+        display: none; /* Sidebar'ı gizle */
+        transition: 0.3s;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    #sidebarToggle {
+        display: block; /* Toggle butonunu göster */
+    }
+}
+
+/* Özellikleri eklenen veya değiştirilen kısımlar */
+#sidebar {
+    top: 0; /* Üstten başlaması için */
+    bottom: 0; /* Altta sonlanması için */
+    min-height: 100vh;
+}

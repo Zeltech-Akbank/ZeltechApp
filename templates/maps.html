@@ -1,17 +1,95 @@
 {% extends "layout.html" %}
+
 {% block navbar %}
 {% endblock %}
 
-{% block body %}
+<style>
+    .card {
+        width: 80%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+</style>
 
-<div class="card" style="width: 100%">
+{% block body %}
+<div class="card mt-4">
   <div class="card-body">
     <h5 class="card-title">Gelen Yardım Talepleri</h5>
-    <div id="map" style="height: 600px;"></div>
+    <div id="map" style="height: 400px;"></div>
+    <div id="legend" style="background-color: white; padding: 10px; margin: 10px; border: 1px solid black;"></div>
   </div>
 </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjyV--c8NY61vU-2c9uQ9Ci00hWqxEFA4&callback=initMap" async defer></script>
-    <script src="../static/js/maps.js"></script>
+<div class="container mt-4 mb-4">
+    <h4>Filtreleme ve Arama</h4>
+    <div class="row mb-2">
+        <div class="col-md-4">
+            <input type="text" id="searchInput" class="form-control" placeholder="Ara...">
+        </div>
+        <div class="col-md-2 align-self-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterTeyit">
+                <label class="form-check-label" for="filterTeyit">Teyit Edildi</label>
+            </div>
+        </div>
+        <div class="col-md-2 align-self-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterKarsilandi">
+                <label class="form-check-label" for="filterKarsilandi">Karşılandı</label>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>İsim</th>
+                <th>Konu</th>
+                <th>Detay</th>
+                <th>Teyit Edildi</th>
+                <th>Karşılandı</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ihbar in ihbarlar %}
+<tr>
+    <td>{{ ihbar.isim }}</td>
+    <td>{{ ihbar.konu }}</td>
+    <td>{{ ihbar.detay }}</td>
+    <td>
+        <input type="checkbox" class="teyit" data-id="{{ ihbar.id }}" {% if ihbar.teyit == 'Evet' %} checked {% endif %}>
+    </td>
+    <td>
+        <input type="checkbox" class="karsilandi" data-id="{{ ihbar.id }}" {% if ihbar.karsilandi == 'Evet' %} checked {% endif %}>
+    </td>
+    <td>
+        <button class="btn btn-sm btn-primary duzenle" data-id="{{ ihbar.id }}">Düzenle</button>
+    </td>
+</tr>
+{% endfor %}
+        </tbody>
+    </table>
+
+    <nav>
+        <ul class="pagination">
+            {% for page_num in range(1, total_pages + 1) %}
+                <li class="page-item {% if request.args.get('page', 1, type=int) == page_num %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('chat.maps_view', page=page_num) }}">{{ page_num }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<script>
+    var pois = {{ pois|tojson|safe }};
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjyV--c8NY61vU-2c9uQ9Ci00hWqxEFA4&callback=initMap" async defer></script>
+<script src="../static/js/maps.js"></script>
+<script src="../static/js/voluntarily.js"></script>
 {% endblock %}

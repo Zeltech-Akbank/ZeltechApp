@@ -20,16 +20,13 @@
                             <input type="text" class="form-control" id="gonderici-adi" name="gonderici-adi" required placeholder="İsim Soyisim">
                         </div>
                         <div class="mb-3">
-                            <label for="gonderici-telefonu">Gönderici Telefonu</label>
+                            <label for="sofor-tckn">Şoför T.C. Kimlik No</label>
+                            <input type="text" class="form-control" id="sofor-tckn" name="sofor-tckn" required placeholder="11223344566" maxlength="11" pattern="\d{11}">
+                            <small class="form-text text-muted">Lütfen 11 haneli T.C. Kimlik Numaranızı giriniz.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderici-telefonu">Gönderici İrtibat Numarası</label>
                             <input type="tel" class="form-control" id="gonderici-telefonu" name="gonderici-telefonu" required placeholder="555 555 55 55">
-                        </div>
-                        <div class="mb-3">
-                            <label for="gonderim-tarihi">Gönderim Tarihi</label>
-                            <input type="date" class="form-control" id="gonderim-tarihi" name="gonderim-tarihi" required placeholder="2023-10-16">
-                        </div>
-                        <div class="mb-3">
-                            <label for="tahmini-teslimat-tarihi">Tahmini Teslimat Tarihi</label>
-                            <input type="date" class="form-control" id="tahmini-teslimat-tarihi" name="tahmini-teslimat-tarihi" required placeholder="2023-10-17">
                         </div>
                     </div>
                 </div>
@@ -57,15 +54,234 @@
                         </div>
                     </div>
                 </div>
+                <div class="card card3">
+                    <div class="card-body">
+                        <h2>Gönderim Adresi</h2>
+                        <div class="mb-3">
+                            <label for="gonderim-il">İl</label>
+                            <select class="form-control" id="gonderim-il" name="gonderim-il" required>
+                                <!-- Türkiye'deki tüm iller listesi buraya eklenebilir. Örnek olarak birkaç il ekledim. -->
+                                <option value="Istanbul">İstanbul</option>
+                                <option value="Ankara">Ankara</option>
+                                <option value="Izmir">İzmir</option>
+                                <!-- ... -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderim-ilce">İlçe</label>
+                            <select class="form-control" id="gonderim-ilce" name="gonderim-ilce" required>
+                                <!-- İlgili ildeki tüm ilçelerin listesi buraya eklenebilir. -->
+                                <option value="Besiktas">Beşiktaş</option>
+                                <option value="Cankaya">Çankaya</option>
+                                <!-- ... -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderim-tarihi">Gönderim Tarihi</label>
+                            <input type="date" class="form-control" id="gonderim-tarihi" name="gonderim-tarihi" required placeholder="2023-10-16">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gonderim-not">Not</label>
+                            <textarea class="form-control" id="gonderim-not" name="gonderim-not" placeholder="Örneğin Selçuklu Belediyesin’den İletilmekte…"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card4">
+                    <div class="card-body">
+                        <h2>Teslimat Adresi</h2>
+                        <div class="mb-3">
+                            <label for="teslimat-il">İl</label>
+                            <select class="form-control" id="teslimat-il" name="teslimat-il" required>
+                                <!-- Türkiye'deki tüm iller listesi buraya eklenebilir. Örnek olarak birkaç il ekledim. -->
+                                <option value="Istanbul">İstanbul</option>
+                                <option value="Ankara">Ankara</option>
+                                <option value="Izmir">İzmir</option>
+                                <!-- ... -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="teslimat-ilce">İlçe</label>
+                            <select class="form-control" id="teslimat-ilce" name="teslimat-ilce" required>
+                                <!-- İlgili ildeki tüm ilçelerin listesi buraya eklenebilir. -->
+                                <option value="Besiktas">Beşiktaş</option>
+                                <option value="Cankaya">Çankaya</option>
+                                <!-- ... -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahmini-teslimat-tarihi">Tahmini Teslimat Tarihi</label>
+                            <input type="date" class="form-control" id="tahmini-teslimat-tarihi" name="tahmini-teslimat-tarihi" required placeholder="2023-10-17">
+                        </div>
+                        <div class="mb-3">
+                            <label for="teslimat-not">Not</label>
+                            <textarea class="form-control" id="teslimat-not" name="teslimat-not" placeholder="Örneğin Maraş Dokuz Eylül Dağıtım Merkezine Teslim Edilecektir…"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card3">
+    <div class="card-body">
+        <h2>Araçtaki Yardımlar</h2>
+        <div id="yardimlar">
+            <div class="yardim-row mb-3 d-flex align-items-center">
+                <select class="form-control yardim-tipi mr-2" name="yardim-tipi[]" required>
+                    <option value="Çadır">Çadır</option>
+                    <option value="Battaniye">Battaniye</option>
+                    <option value="Yorgan">Yorgan</option>
+                    <option value="Su">Su</option>
+                    <option value="Jeneratör">Jeneratör</option>
+                    <option value="Erkek Giysi">Erkek Giysi</option>
+                    <option value="Erkek İç Çamaşır">Erkek İç Çamaşır</option>
+                    <option value="Kadın Giysi">Kadın Giysi</option>
+                    <option value="Kadın İç Çamaşır">Kadın İç Çamaşır</option>
+                    <option value="Çocuk Giysisi">Çocuk Giysisi</option>
+                    <option value="Çocuk İç Çamaşır">Çocuk İç Çamaşır</option>
+                    <!-- Daha fazla yardım tipi ekleyebilirsiniz -->
+                </select>
+                <input type="number" class="form-control yardim-miktar mr-2" name="yardim-miktar[]" required placeholder="Miktar" min="1">
+                <select class="form-control beden mr-2 d-none" name="beden[]">
+                    <!-- Erkek ve Kadın Giysi Bedenleri -->
+                    <option value="S" class="erkek-kadin">S</option>
+                    <option value="M" class="erkek-kadin">M</option>
+                    <option value="L" class="erkek-kadin">L</option>
+                    <option value="XL" class="erkek-kadin">XL</option>
+
+                    <!-- Çocuk Giysi Bedenleri -->
+                    <option value="1-3 Ay" class="cocuk d-none">1-3 Ay</option>
+                    <option value="3-6 Ay" class="cocuk d-none">3-6 Ay</option>
+                    <option value="6-9 Ay" class="cocuk d-none">6-9 Ay</option>
+                    <option value="1-3 Yaş" class="cocuk d-none">1-3 Yaş</option>
+                    <option value="3-6 Yaş" class="cocuk d-none">3-6 Yaş</option>
+                    <option value="6-9 Yaş" class="cocuk d-none">6-9 Yaş</option>
+                    <option value="9-12 Yaş" class="cocuk d-none">9 - 12 Yaş</option>
+                    <option value="13 Yaş" class="cocuk d-none">13 Yaş</option>
+                </select>
+                <button type="button" class="btn btn-danger remove-yardim">Sil</button>
             </div>
         </div>
-        <div class="float-right">
-            <button class="btn btn-primary" type="submit" style="float: right; margin-right: 10px;">AFAD'a Bildir</button>
+        <button type="button" class="btn btn-secondary mt-2" id="add-yardim">Yeni Yardım Ekle</button>
+    </div>
+</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <button type="submit" class="btn btn-primary">Formu Gönder</button>
+            </div>
         </div>
     </form>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+<script>
+    document.querySelectorAll('.yardim-tipi').forEach(select => {
+        select.addEventListener('change', function() {
+            const bedenSelect = this.parentNode.querySelector('.beden');
+            if (['Erkek Giysi','Erkek İç Çamaşır', 'Kadın Giysi', 'Kadın İç Çamaşır', 'Çocuk Giysisi', 'Çocuk İç Çamaşır'].includes(this.value)) {
+                bedenSelect.classList.remove('d-none');
+
+                const isChildClothing = this.value === 'Çocuk Giysisi' || this.value === 'Çocuk İç Çamaşır';
+                bedenSelect.querySelectorAll('.erkek-kadin').forEach(opt => opt.classList.toggle('d-none', isChildClothing));
+                bedenSelect.querySelectorAll('.cocuk').forEach(opt => opt.classList.toggle('d-none', !isChildClothing));
+
+                // İlk uygun seçeneği otomatik olarak seç
+                bedenSelect.value = bedenSelect.querySelector('option:not(.d-none)').value;
+            } else {
+                bedenSelect.classList.add('d-none');
+            }
+        });
+    });
+
+    document.getElementById('add-yardim').addEventListener('click', function() {
+        const yardimRow = document.createElement('div');
+        yardimRow.className = 'yardim-row mb-3 d-flex align-items-center';
+
+        // Create the "yardim-tipi" dropdown
+        const yardimTipi = document.createElement('select');
+        yardimTipi.className = 'form-control yardim-tipi mr-2';
+        yardimTipi.name = 'yardim-tipi[]';
+        yardimTipi.required = true;
+        [
+            'Çadır', 'Battaniye', 'Yorgan', 'Su', 'Jeneratör',
+            'Erkek Giysi', 'Erkek İç Çamaşır', 'Kadın Giysi',
+            'Kadın İç Çamaşır', 'Çocuk Giysisi', 'Çocuk İç Çamaşır'
+        ].forEach(optionText => {
+            const option = document.createElement('option');
+            option.value = optionText;
+            option.textContent = optionText;
+            yardimTipi.appendChild(option);
+        });
+
+        // Create the "yardim-miktar" input
+        const yardimMiktar = document.createElement('input');
+        yardimMiktar.type = 'number';
+        yardimMiktar.className = 'form-control yardim-miktar mr-2';
+        yardimMiktar.name = 'yardim-miktar[]';
+        yardimMiktar.required = true;
+        yardimMiktar.placeholder = 'Miktar';
+        yardimMiktar.min = '1';
+
+        // Create the "beden" dropdown
+        const beden = document.createElement('select');
+        beden.className = 'form-control beden mr-2 d-none'; // Start with d-none to hide it initially
+        beden.name = 'beden[]';
+
+        const erkekKadinBedenleri = ['S', 'M', 'L', 'XL'];
+        const cocukBedenleri = ['1-3 Ay', '3-6 Ay', '6-9 Ay', '1-3 Yaş', '3-6 Yaş', '6-9 Yaş', '9 - 12 Yaş', '13 Yaş'];
+
+        erkekKadinBedenleri.forEach(optionText => {
+            const option = document.createElement('option');
+            option.value = optionText;
+            option.textContent = optionText;
+            option.className = 'erkek-kadin';
+            beden.appendChild(option);
+        });
+
+        cocukBedenleri.forEach(optionText => {
+            const option = document.createElement('option');
+            option.value = optionText;
+            option.textContent = optionText;
+            option.className = 'cocuk d-none';
+            beden.appendChild(option);
+        });
+
+        // Adjust 'beden' options based on the initial 'yardim-tipi' selection
+        adjustBedenOptions(yardimTipi, beden);
+
+        yardimTipi.addEventListener('change', function() {
+            adjustBedenOptions(yardimTipi, beden);
+        });
+
+        // Create the "Sil" button
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn btn-danger remove-yardim';
+        removeBtn.textContent = 'Sil';
+        removeBtn.type = 'button';
+        removeBtn.addEventListener('click', function() {
+            yardimRow.remove();
+        });
+
+        yardimRow.appendChild(yardimTipi);
+        yardimRow.appendChild(yardimMiktar);
+        yardimRow.appendChild(beden);
+        yardimRow.appendChild(removeBtn);
+
+        document.getElementById('yardimlar').appendChild(yardimRow);
+    });
+
+    function adjustBedenOptions(yardimTipiElement, bedenElement) {
+        if(['Erkek Giysi', 'Erkek İç Çamaşır', 'Kadın Giysi', 'Kadın İç Çamaşır'].includes(yardimTipiElement.value)) {
+            bedenElement.classList.remove('d-none');
+            bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
+            bedenElement.querySelectorAll('.erkek-kadin').forEach(o => o.classList.remove('d-none'));
+        } else if(['Çocuk Giysisi', 'Çocuk İç Çamaşır'].includes(yardimTipiElement.value)) {
+            bedenElement.classList.remove('d-none');
+            bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
+            bedenElement.querySelectorAll('.cocuk').forEach(o => o.classList.remove('d-none'));
+        } else {
+            bedenElement.classList.add('d-none');
+        }
+    }
+
+</script>
 
 {% endblock %}

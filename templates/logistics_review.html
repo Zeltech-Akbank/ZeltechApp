@@ -2,96 +2,112 @@
 {% block navbar %}
 {% endblock %}
 {% block body %}
-    <style>
-        .card {
-            margin: 20px 0 20px 0;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-
-        table {
-            border-collapse: separate;
-            border-spacing: 0 0.5rem;
-        }
-
-        table th, table td {
-            vertical-align: middle;
-            padding: 15px;
-        }
-
-        table th {
-            background-color: #007BFF;
-            color: #000000;
-            border-radius: 10px 10px 0 0;
-        }
-
-        table tbody tr {
-            background-color: #f5f5f5;
-            border-radius: 10px;
-            transition: background-color 0.2s;
-        }
-
-        table tbody tr:hover {
-            background-color: #eaeaea;
-        }
-
-        .badge {
-            font-size: 100%;
-            border-radius: 50px;
-            padding: 5px 10px;
-        }
-
-        .badge.yolda {
-            background-color: #007BFF;
-            color: white;
-        }
-
-        .badge.hazirlaniyor {
-            background-color: #FFC107;
-            color: black;
-        }
-
-    </style>
-
-    <div class="container mt-4">
-        <h2>Lojistik Gözden Geçirme</h2>
-        <div class="card mt-4">
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Gönderici Adı-soyadi</th>
-                            <th>Gönderici Telefonu</th>
-                            <th>Gönderim Tarihi</th>
-                            <th>Tahmini Teslimat Tarihi</th>
-                            <th>Şoför Adı</th>
-                            <th>Şoför Cep Telefonu</th>
-                            <th>Plaka</th>
-                            <th>Yardım Durumu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in items %}
+<div class="container mt-5">
+    <h2 class="mb-4">Lojistik İnceleme</h2>
+    <!-- Filtreleme Dropdown Listesi Başlangıç -->
+    <div class="mb-3">
+        <label for="yardimDurumuFiltre" class="form-label">Yardım Durumunu Filtrele:</label>
+        <select id="yardimDurumuFiltre" class="form-select" onchange="filterTable()">
+            <option value="">Tümünü Göster</option>
+            <option value="Hazırlanıyor">Hazırlanıyor</option>
+            <option value="Yolda">Yolda</option>
+            <option value="Beklemede">Beklemede</option>
+            <option value="Tamamlandı">Tamamlandı</option>
+            <option value="İptal">İptal</option>
+        </select>
+    </div>
+    <!-- Filtreleme Dropdown Listesi Bitiş -->
+    <table class="table table-hover table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Gönderici Adı</th>
+            <th>Şoför TCKN</th>
+            <th>Gönderici Telefonu</th>
+            <th>Şoför Adı</th>
+            <th>Şoför Cep Telefonu</th>
+            <th>Plaka</th>
+            <th>Yardım Durumu</th>
+            <th>Gönderim İl/İlçe</th>
+            <th>Teslimat İl/İlçe</th>
+            <th>Gönderim Tarihi</th>
+            <th>Tahmini Teslimat Tarihi</th>
+            <th>Yardımlar</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ items["gonderici-adi"] }}</td>
+            <td>{{ items["sofor-tckn"] }}</td>
+            <td>{{ items["gonderici-telefonu"] }}</td>
+            <td>{{ items["sofor-adi"] }}</td>
+            <td>{{ items["sofor-cep-telefonu"] }}</td>
+            <td>{{ items["plaka"] }}</td>
+            <td>{{ items["yardim-durumu"] }}</td>
+            <td>{{ items["gonderim-il"] }}/{{ items["gonderim-ilce"] }}</td>
+            <td>{{ items["teslimat-il"] }}/{{ items["teslimat-ilce"] }}</td>
+            <td>{{ items["gonderim-tarihi"] }}</td>
+            <td>{{ items["tahmini-teslimat-tarihi"] }}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#yardimModal">
+                    Yardımları Görüntüle
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    <!-- Modal içeriği -->
+    <div class="modal fade" id="yardimModal" tabindex="-1" aria-labelledby="yardimModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="yardimModalLabel">Yardım Detayları</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ item.gonderici_adi }}</td>
-                                <td>{{ item.gonderici_telefonu }}</td>
-                                <td>{{ item.gonderim_tarihi }}</td>
-                                <td>{{ item.tahmini_teslimat_tarihi }}</td>
-                                <td>{{ item.sofor_adi }}</td>
-                                <td>{{ item.sofor_cep_telefonu }}</td>
-                                <td>{{ item.plaka }}</td>
-                                <td>
-                                    <span class="badge {{ 'yolda' if item.yardim_durumu == 'Yolda' else 'hazirlaniyor' }}">
-                                        {{ item.yardim_durumu }}
-                                    </span>
-                                </td>
+                                <th>Yardım Tipi</th>
+                                <th>Miktar</th>
+                                <th>Beden (Var ise)</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for yardim in items.yardimlar %}
+                            <tr>
+                                <td>{{ yardim["yardim-tipi"] }}</td>
+                                <td>{{ yardim["yardim-miktar"] }}</td>
+                                <td>{{ yardim.beden or '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
             </div>
         </div>
     </div>
+</div>
+<script>
+    function filterTable() {
+        let filter = document.getElementById('yardimDurumuFiltre').value;
+        let rows = document.querySelectorAll('table tbody tr');
+
+        rows.forEach(row => {
+            let cell = row.querySelector('td:nth-child(7)').textContent;
+            if (filter === "" || cell === filter) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
 {% endblock %}
+
+
+
+
 
