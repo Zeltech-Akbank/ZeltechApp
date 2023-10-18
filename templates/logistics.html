@@ -269,18 +269,21 @@
     });
 
     function adjustBedenOptions(yardimTipiElement, bedenElement) {
-        if(['Erkek Giysi', 'Erkek İç Çamaşır', 'Kadın Giysi', 'Kadın İç Çamaşır'].includes(yardimTipiElement.value)) {
-            bedenElement.classList.remove('d-none');
-            bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
-            bedenElement.querySelectorAll('.erkek-kadin').forEach(o => o.classList.remove('d-none'));
-        } else if(['Çocuk Giysisi', 'Çocuk İç Çamaşır'].includes(yardimTipiElement.value)) {
-            bedenElement.classList.remove('d-none');
-            bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
-            bedenElement.querySelectorAll('.cocuk').forEach(o => o.classList.remove('d-none'));
-        } else {
-            bedenElement.classList.add('d-none');
-        }
+    if(['Erkek Giysi', 'Erkek İç Çamaşır', 'Kadın Giysi', 'Kadın İç Çamaşır'].includes(yardimTipiElement.value)) {
+        bedenElement.classList.remove('d-none');
+        bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
+        bedenElement.querySelectorAll('.erkek-kadin').forEach(o => o.classList.remove('d-none'));
+        bedenElement.value = 'S'; // Varsayılan beden değeri 'S' olarak belirlenir.
+    } else if(['Çocuk Giysisi', 'Çocuk İç Çamaşır'].includes(yardimTipiElement.value)) {
+        bedenElement.classList.remove('d-none');
+        bedenElement.querySelectorAll('option').forEach(o => o.classList.add('d-none'));
+        bedenElement.querySelectorAll('.cocuk').forEach(o => o.classList.remove('d-none'));
+        bedenElement.value = bedenElement.querySelector('.cocuk:not(.d-none)').value; // Çocuk bedenleri için varsayılan değeri ayarla
+    } else {
+        bedenElement.classList.add('d-none');
     }
+    }
+
 
 </script>
 
