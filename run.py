@@ -10,6 +10,11 @@ from decouple import config
 db = SQLAlchemy()
 
 
+def create_tables(app):
+    with app.app_context():
+        db.create_all()
+
+
 def create_app():
     app = Flask(__name__)
     CORS(app)
@@ -31,4 +36,5 @@ def create_app():
 
 if __name__ == '__main__':
     app_instance = create_app()
+    # create_tables(app_instance)
     socketio.run(app_instance, port=5001, debug=True)
