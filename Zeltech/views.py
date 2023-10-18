@@ -1,14 +1,32 @@
-from flask import render_template, request
+from functools import wraps
+
+from flask import current_app, render_template, request, redirect, url_for, flash, session
 from flask_socketio import SocketIO
-from . import chat, app
+from . import chat, app, auth
 from flask import jsonify
 from .controllers import Settings, ChatSession, RequestManager
+from .models import FormEntry, AidsOnVehicle, Users, db
+from sqlalchemy import MetaData
+
 
 socketio = SocketIO(cors_allowed_origins="*")
 
 settings = Settings()
 chat_session = ChatSession()
 manager = RequestManager(settings, chat_session)
+
+
+@app.route('/dbtest')
+def dbtest():
+    try:
+        with current_app.app_context():
+            # Bir sorgu çalıştırarak veritabanı bağlantısını test edin
+            meta = MetaData()
+            meta.reflect(bind=db.engine)
+            tables = list(meta.tables.keys())
+            return f"Bağlantı başarılı! Tablolar: {tables}"
+    except Exception as e:
+        return f"Bağlantı hatası: {str(e)}"
 
 
 @chat.route('/')
@@ -28,9 +46,47 @@ def handle_user_message(message):
     socketio.emit('bot_response', bot_response)
 
 
-@app.route('/admin-panel')
+def admin_access_required(view_func):
+    @wraps(view_func)
+    def decorated_view(*args, **kwargs):
+        if 'username' in session:
+            return view_func(*args, **kwargs)
+        else:
+            flash('Admin paneline erişim izniniz yok.', 'danger')
+            return redirect(url_for('login'))
+    return decorated_view
+
+
+@app.route('/admin_panel')
+@admin_access_required
 def admin_panel():
-    return render_template('admin_panel.html')
+    username = session['username']
+    return render_template('admin_panel.html', username=username)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = Users.query.filter_by(username=username).first()
+
+        if user is not None and user.password == password:
+            session['username'] = user.username  # Kullanıcının adını oturumda sakla
+            flash('Giriş başarılı!', 'success')
+            return redirect(url_for('app.admin_panel'))
+        else:
+            flash('Hatalı kullanıcı adı veya şifre.', 'danger')
+
+    return render_template('login.html')
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop('username', None)
+    session.clear()
+    return redirect(url_for('app.login'))
+
 
 
 @app.route('/logistic')
@@ -99,36 +155,45 @@ def form_submit():
     # Daha sonra bu veriyi bir veritabanına kaydedeceğiz.
     return jsonify(data)
 
-
 @app.route('/logistic-review')
 def logistics_review():
-    mock_data = {
-        "gonderici-adi": "Ahmet Yılmaz",
-        "sofor-tckn": "12345678901",
-        "gonderici-telefonu": "555 555 55 55",
-        "sofor-adi": "Mehmet Öztürk",
-        "sofor-cep-telefonu": "533 533 53 33",
-        "plaka": "34 ABC 123",
-        "yardim-durumu": "Yolda",
-        "gonderim-il": "İstanbul",
-        "gonderim-ilce": "Beşiktaş",
-        "gonderim-tarihi": "2023-10-20",
-        "gonderim-not": "Selçuklu Belediyesin’den İletilmekte…",
-        "teslimat-il": "Ankara",
-        "teslimat-ilce": "Çankaya",
-        "tahmini-teslimat-tarihi": "2023-10-22",
-        "teslimat-not": "Maraş Dokuz Eylül Dağıtım Merkezine Teslim Edilecektir…",
-        "yardimlar": [
-            {"yardim-tipi": "Çadır", "yardim-miktar": 2},
-            {"yardim-tipi": "Battaniye", "yardim-miktar": 5},
-            {"yardim-tipi": "Su", "yardim-miktar": 10},
-            {"yardim-tipi": "Erkek Giysi", "yardim-miktar": 7, "beden": "L"},
-            {"yardim-tipi": "Kadın İç Çamaşır", "yardim-miktar": 15, "beden": "M"},
-            {"yardim-tipi": "Çocuk Giysisi", "yardim-miktar": 4, "beden": "3-6 Yaş"},
-        ]
-    }
+    entries = FormEntry.query.all()  # Tüm kayıtları al.
+    if not entries:
+        return "Veritabanında hiç veri bulunmamaktadır."
 
-    return render_template('logistics_review.html', items=mock_data)
+    data_list = []
+
+    for entry in entries:
+        aids_on_vehicle = AidsOnVehicle.query.filter_by(form_entry_id=entry.id).all()
+        data = {
+            "gonderici-adi": entry.sender_name,
+            "sofor-tckn": entry.driver_id_number,
+            "gonderici-telefonu": entry.sender_phone,
+            "sofor-adi": entry.driver_name,
+            "sofor-cep-telefonu": entry.driver_mobile_phone,
+            "plaka": entry.license_plate,
+            "yardim-durumu": entry.assistance_status,
+            "gonderim-il": entry.dispatch_province,
+            "gonderim-ilce": entry.dispatch_district,
+            "gonderim-tarihi": entry.dispatch_date.strftime('%Y-%m-%d'),
+            "gonderim-not": entry.dispatch_note,
+            "teslimat-il": entry.delivery_province,
+            "teslimat-ilce": entry.delivery_district,
+            "tahmini-teslimat-tarihi": entry.estimated_delivery_date.strftime('%Y-%m-%d'),
+            "teslimat-not": entry.delivery_note,
+            "yardimlar": [
+                {
+                    "yardim-tipi": aid.aid_type,
+                    "yardim-miktar": aid.aid_quantity,
+                    "beden": aid.size or ""
+                }
+                for aid in aids_on_vehicle
+            ]
+        }
+        data_list.append(data)
+
+    return render_template('logistics_review.html', items=data_list)
+
 
 
 ihbarlar = [{"isim": f"Örnek İsim {i}", "konu": "Örnek Konu", "detay": "Örnek Detay", "teyit": "Hayır",

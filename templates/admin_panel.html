@@ -26,6 +26,9 @@
                     <a class="nav-link" id="menu3" href="#">Afad Gönüllüsü Teyit Sistemi</a>
                 </li>
             </ul>
+            <div>
+                  <button id="logoutButton" class="btn btn-danger">Çıkış Yap</button>
+            </div>
         </nav>
 
         <!-- Main Content -->
@@ -40,5 +43,22 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../static/js/admin_panel.js"></script>
+    <script>
+    // Çıkış yap düğmesine tıklanınca
+    document.getElementById("logoutButton").addEventListener("click", function() {
+        // Oturumu sonlandırmak için bir istek gönder
+        $.ajax({
+            url: '/logout', // Oturumu sonlandıran bir URL endpoint'i oluşturmalısınız
+            type: 'POST',
+            success: function(response) {
+                // Oturum sonlandırıldığında kullanıcıyı login sayfasına yönlendir
+                window.location.href = '/login'; // Login sayfasının URL'sini güncelleyin
+            },
+            error: function() {
+                console.log('Çıkış yapılırken bir hata oluştu.');
+            }
+        });
+    });
+</script>
 
 {% endblock %}

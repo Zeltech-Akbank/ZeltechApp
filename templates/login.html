@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block navbar %}
+{% endblock %}
+{% block body %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg" style="width: 20rem;">
+        <div class="card-body">
+            <!-- Flash Mesajlarını Buraya Ekleyin -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} mt-2">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <!-- Flash Mesajlarının Sonu -->
+
+            <h5 class="card-title text-center mb-4">Giriş Yap</h5>
+            <form action="/login" method="POST">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Kullanıcı Adı</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Şifre</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $(".alert").hide();
+
+    $(".alert").fadeIn("slow");
+
+    setTimeout(function(){
+        $(".alert").fadeOut("slow");
+    }, 3000);
+});
+</script>
+{% endblock %}

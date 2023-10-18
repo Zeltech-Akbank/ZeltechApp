@@ -3,11 +3,8 @@ from flask_cors import CORS
 from decouple import config as cf
 from Zeltech import chat, app as app_blueprint
 from Zeltech.views import socketio
-from flask_sqlalchemy import SQLAlchemy
 from decouple import config
-
-# Veritabanı nesnesini burada oluştur
-db = SQLAlchemy()
+from Zeltech.models import db
 
 
 def create_tables(app):
@@ -36,5 +33,5 @@ def create_app():
 
 if __name__ == '__main__':
     app_instance = create_app()
-    # create_tables(app_instance)
-    socketio.run(app_instance, port=5001, debug=True)
+    #create_tables(app_instance)
+    socketio.run(app_instance, port=5002, debug=True)

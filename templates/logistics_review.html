@@ -4,7 +4,6 @@
 {% block body %}
 <div class="container mt-5">
     <h2 class="mb-4">Lojistik İnceleme</h2>
-    <!-- Filtreleme Dropdown Listesi Başlangıç -->
     <div class="mb-3">
         <label for="yardimDurumuFiltre" class="form-label">Yardım Durumunu Filtrele:</label>
         <select id="yardimDurumuFiltre" class="form-select" onchange="filterTable()">
@@ -16,7 +15,7 @@
             <option value="İptal">İptal</option>
         </select>
     </div>
-    <!-- Filtreleme Dropdown Listesi Bitiş -->
+
     <table class="table table-hover table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -35,32 +34,35 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>{{ items["gonderici-adi"] }}</td>
-            <td>{{ items["sofor-tckn"] }}</td>
-            <td>{{ items["gonderici-telefonu"] }}</td>
-            <td>{{ items["sofor-adi"] }}</td>
-            <td>{{ items["sofor-cep-telefonu"] }}</td>
-            <td>{{ items["plaka"] }}</td>
-            <td>{{ items["yardim-durumu"] }}</td>
-            <td>{{ items["gonderim-il"] }}/{{ items["gonderim-ilce"] }}</td>
-            <td>{{ items["teslimat-il"] }}/{{ items["teslimat-ilce"] }}</td>
-            <td>{{ items["gonderim-tarihi"] }}</td>
-            <td>{{ items["tahmini-teslimat-tarihi"] }}</td>
-            <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#yardimModal">
-                    Yardımları Görüntüle
-                </button>
-            </td>
-        </tr>
-    </tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item["gonderici-adi"] }}</td>
+                <td>{{ item["sofor-tckn"] }}</td>
+                <td>{{ item["gonderici-telefonu"] }}</td>
+                <td>{{ item["sofor-adi"] }}</td>
+                <td>{{ item["sofor-cep-telefonu"] }}</td>
+                <td>{{ item["plaka"] }}</td>
+                <td>{{ item["yardim-durumu"] }}</td>
+                <td>{{ item["gonderim-il"] }}/{{ item["gonderim-ilce"] }}</td>
+                <td>{{ item["teslimat-il"] }}/{{ item["teslimat-ilce"] }}</td>
+                <td>{{ item["gonderim-tarihi"] }}</td>
+                <td>{{ item["tahmini-teslimat-tarihi"] }}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#yardimModal-{{ loop.index }}">
+                        Yardımları Görüntüle
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
 </table>
-    <!-- Modal içeriği -->
-    <div class="modal fade" id="yardimModal" tabindex="-1" aria-labelledby="yardimModalLabel" aria-hidden="true">
+
+    {% for item in items %}
+    <div class="modal fade" id="yardimModal-{{ loop.index }}" tabindex="-1" aria-labelledby="yardimModalLabel-{{ loop.index }}" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="yardimModalLabel">Yardım Detayları</h5>
+                    <h5 class="modal-title" id="yardimModalLabel-{{ loop.index }}">Yardım Detayları</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -73,11 +75,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for yardim in items.yardimlar %}
+                            {% for yardim in item["yardimlar"] %}
                             <tr>
                                 <td>{{ yardim["yardim-tipi"] }}</td>
                                 <td>{{ yardim["yardim-miktar"] }}</td>
-                                <td>{{ yardim.beden or '-' }}</td>
+                                <td>{{ yardim["beden"] or '-' }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -89,6 +91,7 @@
             </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 <script>
     function filterTable() {
@@ -106,8 +109,3 @@
     }
 </script>
 {% endblock %}
-
-
-
-
-
