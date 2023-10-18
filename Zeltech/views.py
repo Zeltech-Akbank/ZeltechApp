@@ -1,9 +1,8 @@
 from flask import render_template, request
 from flask_socketio import SocketIO
-from . import chat
+from . import chat, app
 from flask import jsonify
 from .controllers import Settings, ChatSession, RequestManager
-
 
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -17,48 +16,54 @@ def index():
     return render_template('chat.html')
 
 
-@chat.route('/admin-panel')
+@socketio.on('user_message')
+def handle_user_message(message):
+    print("Message received:", message)
+
+    try:
+        bot_response = manager.send_request(message)
+    except ConnectionError:
+        bot_response = "Bir hata oluştu. Lütfen tekrar deneyin."
+
+    socketio.emit('bot_response', bot_response)
+
+
+@app.route('/admin-panel')
 def admin_panel():
     return render_template('admin_panel.html')
 
 
-@chat.route('/logistic')
+@app.route('/logistic')
 def logistic_template():
     data = {'a de bakalım': 'a', 'bide y de': 'y', 'şimdi bide ı': 'ı'}
     return render_template('logistics.html', veri=data)
 
 
-@chat.route('/form-submit', methods=['POST'])
+@app.route('/form-submit', methods=['POST'])
 def form_submit():
-    # Gönderen Bilgileri
     gonderici_adi = request.form.get('gonderici-adi')
     sofor_tckn = request.form.get('sofor-tckn')
     gonderici_telefonu = request.form.get('gonderici-telefonu')
 
-    # Araç Bilgileri
     sofor_adi = request.form.get('sofor-adi')
     sofor_cep_telefonu = request.form.get('sofor-cep-telefonu')
     plaka = request.form.get('plaka')
     yardim_durumu = request.form.get('yardim-durumu')
 
-    # Gönderim Adresi
     gonderim_il = request.form.get('gonderim-il')
     gonderim_ilce = request.form.get('gonderim-ilce')
     gonderim_tarihi = request.form.get('gonderim-tarihi')
     gonderim_not = request.form.get('gonderim-not')
 
-    # Teslimat Adresi
     teslimat_il = request.form.get('teslimat-il')
     teslimat_ilce = request.form.get('teslimat-ilce')
     tahmini_teslimat_tarihi = request.form.get('tahmini-teslimat-tarihi')
     teslimat_not = request.form.get('teslimat-not')
 
-    # Araçtaki Yardımlar
-    yardim_tipi = request.form.getlist('yardim-tipi[]')  # Listeyi al
-    yardim_miktar = request.form.getlist('yardim-miktar[]')  # Listeyi al
-    beden = request.form.getlist('beden[]')  # Listeyi al
+    yardim_tipi = request.form.getlist('yardim-tipi[]')
+    yardim_miktar = request.form.getlist('yardim-miktar[]')
+    beden = request.form.getlist('beden[]')
 
-    # Verileri toplama
     data = {
         "Gönderen Bilgileri": {
             "Gönderici Adı": gonderici_adi,
@@ -95,7 +100,7 @@ def form_submit():
     return jsonify(data)
 
 
-@chat.route('/logistic-review')
+@app.route('/logistic-review')
 def logistics_review():
     mock_data = {
         "gonderici-adi": "Ahmet Yılmaz",
@@ -125,10 +130,12 @@ def logistics_review():
 
     return render_template('logistics_review.html', items=mock_data)
 
+
 ihbarlar = [{"isim": f"Örnek İsim {i}", "konu": "Örnek Konu", "detay": "Örnek Detay", "teyit": "Hayır",
                  "karsilandi": "Hayır", "id": i} for i in range(1, 3)]  # 50 örnek ihbar bu veritabanından gelcek.
 
-@chat.route('/maps')
+
+@app.route('/maps')
 def maps_view():
     pois = [
         {"lat": 39.9334, "lng": 32.8597, "label": "Hastane", "info": "Hastane A - Acil Servis"},
@@ -152,7 +159,7 @@ def maps_view():
                            total_pages=(total_ihbarlar // items_per_page) + 1)
 
 
-@chat.route('/durum-duzenle/<int:id>', methods=['POST'])
+@app.route('/durum-duzenle/<int:id>', methods=['POST'])
 def duzenle(id):
     global ihbarlar
     for ihbar in ihbarlar:
@@ -164,14 +171,3 @@ def duzenle(id):
     print(ihbarlar)
     return jsonify({'status': 'success'})
 
-
-@socketio.on('user_message')
-def handle_user_message(message):
-    print("Message received:", message)
-    
-    try:
-        bot_response = manager.send_request(message)
-    except ConnectionError:
-        bot_response = "Bir hata oluştu. Lütfen tekrar deneyin."
-    
-    socketio.emit('bot_response', bot_response)
