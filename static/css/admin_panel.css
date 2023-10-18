@@ -42,3 +42,10 @@ main {
     bottom: 0; /* Altta sonlanması için */
     min-height: 100vh;
 }
+
+#logoutButton {
+    position: fixed;
+    bottom: 10px;
+    left: 5%;
+    z-index: 9999;
+}

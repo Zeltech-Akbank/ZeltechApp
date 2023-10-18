@@ -57,4 +57,17 @@ document.getElementById("sidebarToggle").addEventListener("click", function() {
     }
 });
 
+// Çıkış yap düğmesine tıklanınca
+document.getElementById("logoutButton").addEventListener("click", function() {
+    $.ajax({
+        url: '/logout',
+        type: 'POST',
+        success: function(response) {
+            window.location.href = '/login';
+        },
+        error: function() {
+            console.log('Çıkış yapılırken bir hata oluştu.');
+        }
+    });
+});
 console.log("JS dosyası yüklendi!");

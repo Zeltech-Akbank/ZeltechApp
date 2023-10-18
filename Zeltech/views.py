@@ -2,7 +2,7 @@ from functools import wraps
 
 from flask import current_app, render_template, request, redirect, url_for, flash, session
 from flask_socketio import SocketIO
-from . import chat, app, auth
+from . import chat, app
 from flask import jsonify
 from .controllers import Settings, ChatSession, RequestManager
 from .models import FormEntry, AidsOnVehicle, Users, db
@@ -61,7 +61,8 @@ def admin_access_required(view_func):
 @admin_access_required
 def admin_panel():
     username = session['username']
-    return render_template('admin_panel.html', username=username)
+    user_role = session['user_role']
+    return render_template('admin_panel.html', username=username, user_role=user_role)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -70,9 +71,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = Users.query.filter_by(username=username).first()
-
         if user is not None and user.password == password:
             session['username'] = user.username  # Kullanıcının adını oturumda sakla
+            session['user_role'] = " ".join(str(user.role).split('.')[1].split('_'))  # Kullanıcının adını oturumda sakla
+
             flash('Giriş başarılı!', 'success')
             return redirect(url_for('app.admin_panel'))
         else:
@@ -84,6 +86,8 @@ def login():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('username', None)
+    session.pop('user_role', None)
+
     session.clear()
     return redirect(url_for('app.login'))
 
