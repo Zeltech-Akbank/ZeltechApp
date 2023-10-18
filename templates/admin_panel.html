@@ -16,24 +16,24 @@
                 <h4>Admin Panel</h4>
             </div>
             <ul class="nav flex-column">
-    {% if user_role == "AFAD YETKILISI" or user_role == "STK UYESI" %}
-        <li class="nav-item">
-            <a class="nav-link active" id="menu1" href="#">Lojistik Bilgisi Ekle</a>
-        </li>
-    {% endif %}
+                {% if user_role == "AFAD YETKILISI" or user_role == "STK UYESI" %}
+                    <li class="nav-item">
+                        <a class="nav-link active" id="menu1" href="#">Lojistik Bilgisi Ekle</a>
+                    </li>
+                {% endif %}
 
-    {% if user_role == "AFAD YETKILISI" %}
-        <li class="nav-item">
-            <a class="nav-link" id="menu2" href="#">Lojistik Bilgisi Görüntüle</a>
-        </li>
-    {% endif %}
+                {% if user_role == "AFAD YETKILISI" %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="menu2" href="#">Lojistik Bilgisi Görüntüle</a>
+                    </li>
+                {% endif %}
 
-    {% if user_role == "AFAD YETKILISI" or user_role == "AFAD GONULLUSU" %}
-        <li class="nav-item">
-            <a class="nav-link" id="menu3" href="#">Afad Gönüllüsü Teyit Sistemi</a>
-        </li>
-    {% endif %}
-</ul>
+                {% if user_role == "AFAD YETKILISI" or user_role == "AFAD GONULLUSU" %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="menu3" href="#">Afad Gönüllüsü Teyit Sistemi</a>
+                    </li>
+                {% endif %}
+            </ul>
             <div class="d-flex justify-content-center align-items-center">
                 <button id="logoutButton" class="btn btn-danger">Çıkış Yap</button>
             </div>
@@ -51,8 +51,4 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../static/js/admin_panel.js"></script>
-    <script>
-
-</script>
-
 {% endblock %}

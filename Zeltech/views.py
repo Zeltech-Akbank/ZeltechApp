@@ -5,9 +5,10 @@ from flask_socketio import SocketIO
 from . import chat, app
 from flask import jsonify
 from .controllers import Settings, ChatSession, RequestManager
-from .models import FormEntry, AidsOnVehicle, Users, db
+from .models import FormEntry, AidsOnVehicle, Users, db, HelpType, Size, City, District
 from sqlalchemy import MetaData
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 socketio = SocketIO(cors_allowed_origins="*")
 
@@ -92,72 +93,64 @@ def logout():
     return redirect(url_for('app.login'))
 
 
-
 @app.route('/logistic')
 def logistic_template():
-    data = {'a de bakalım': 'a', 'bide y de': 'y', 'şimdi bide ı': 'ı'}
-    return render_template('logistics.html', veri=data)
+    help_types = HelpType.query.all()
+    help_types_serializable = [ht.to_dict() for ht in help_types]
+    sizes = Size.query.all()
+
+    cities = City.query.all()
+    districts = {city.city_name: District.query.filter_by(city_id=city.city_id).all() for city in cities}
+
+    return render_template('logistics.html', help_types=help_types, sizes=sizes,
+                           help_types_serializable=help_types_serializable, cities=cities, districts=districts)
 
 
 @app.route('/form-submit', methods=['POST'])
 def form_submit():
-    gonderici_adi = request.form.get('gonderici-adi')
-    sofor_tckn = request.form.get('sofor-tckn')
-    gonderici_telefonu = request.form.get('gonderici-telefonu')
+    try:
+        form_entry = FormEntry(
+            sender_name=request.form['gonderici-adi'],
+            driver_id_number=request.form['sofor-tckn'],
+            sender_phone=request.form['gonderici-telefonu'],
+            driver_name=request.form['sofor-adi'],
+            driver_mobile_phone=request.form['sofor-cep-telefonu'],
+            license_plate=request.form['plaka'],
+            assistance_status=request.form['yardim-durumu'],
+            dispatch_province=request.form['gonderim-il'],
+            dispatch_district=request.form['gonderim-ilce'],
+            dispatch_date=request.form['gonderim-tarihi'],
+            dispatch_note=request.form['gonderim-not'],
+            delivery_province=request.form['teslimat-il'],
+            delivery_district=request.form['teslimat-ilce'],
+            estimated_delivery_date=request.form['tahmini-teslimat-tarihi'],
+            delivery_note=request.form['teslimat-not']
+        )
 
-    sofor_adi = request.form.get('sofor-adi')
-    sofor_cep_telefonu = request.form.get('sofor-cep-telefonu')
-    plaka = request.form.get('plaka')
-    yardim_durumu = request.form.get('yardim-durumu')
+        db.session.add(form_entry)
+        db.session.commit()
 
-    gonderim_il = request.form.get('gonderim-il')
-    gonderim_ilce = request.form.get('gonderim-ilce')
-    gonderim_tarihi = request.form.get('gonderim-tarihi')
-    gonderim_not = request.form.get('gonderim-not')
+        form_entry_id = form_entry.id
 
-    teslimat_il = request.form.get('teslimat-il')
-    teslimat_ilce = request.form.get('teslimat-ilce')
-    tahmini_teslimat_tarihi = request.form.get('tahmini-teslimat-tarihi')
-    teslimat_not = request.form.get('teslimat-not')
+        yardim_tipi = request.form.getlist('yardim-tipi[]')
+        yardim_miktar = request.form.getlist('yardim-miktar[]')
+        beden = request.form.getlist('beden[]')
 
-    yardim_tipi = request.form.getlist('yardim-tipi[]')
-    yardim_miktar = request.form.getlist('yardim-miktar[]')
-    beden = request.form.getlist('beden[]')
+        for tip, miktar, bed in zip(yardim_tipi, yardim_miktar, beden):
+            # Eğer yardım tipi 'Çadır' veya başka bir bedensiz ürün ise bedeni atla.
+            if tip not in ['Erkek Giysi', 'Erkek İç Çamaşır', 'Kadın Giysi', 'Kadın İç Çamaşır', 'Çocuk Giysisi', 'Çocuk İç Çamaşır']:
+                bed = None
 
-    data = {
-        "Gönderen Bilgileri": {
-            "Gönderici Adı": gonderici_adi,
-            "Şoför TCKN": sofor_tckn,
-            "Gönderici Telefonu": gonderici_telefonu
-        },
-        "Araç Bilgileri": {
-            "Şoför Adı": sofor_adi,
-            "Şoför Cep Telefonu": sofor_cep_telefonu,
-            "Plaka": plaka,
-            "Yardım Durumu": yardim_durumu
-        },
-        "Gönderim Adresi": {
-            "İl": gonderim_il,
-            "İlçe": gonderim_ilce,
-            "Gönderim Tarihi": gonderim_tarihi,
-            "Not": gonderim_not
-        },
-        "Teslimat Adresi": {
-            "İl": teslimat_il,
-            "İlçe": teslimat_ilce,
-            "Tahmini Teslimat Tarihi": tahmini_teslimat_tarihi,
-            "Not": teslimat_not
-        },
-        "Araçtaki Yardımlar": [{
-            "Yardım Tipi": y_tipi,
-            "Yardım Miktarı": y_miktar,
-            "Beden": b
-        } for y_tipi, y_miktar, b in zip(yardim_tipi, yardim_miktar, beden)]
-    }
+            aid = AidsOnVehicle(form_entry_id=form_entry_id, aid_type=tip, aid_quantity=miktar, size=bed)
+            db.session.add(aid)
 
-    print(data)
-    # Daha sonra bu veriyi bir veritabanına kaydedeceğiz.
-    return jsonify(data)
+        db.session.commit()
+
+        return jsonify({"message": "Success!", "redirect_url": "/admin_panel"})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 
 @app.route('/logistic-review')
 def logistics_review():
@@ -217,7 +210,6 @@ def maps_view():
     # Sayfa numarasını al
     page = request.args.get('page', 1, type=int)
     items_per_page = 10
-
 
     total_ihbarlar = len(ihbarlar)
     start = (page - 1) * items_per_page

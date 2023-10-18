@@ -34,4 +34,4 @@ def create_app():
 if __name__ == '__main__':
     app_instance = create_app()
     #create_tables(app_instance)
-    socketio.run(app_instance, port=5002, debug=True)
+    socketio.run(app_instance, port=5004, debug=True)

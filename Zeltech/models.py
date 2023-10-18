@@ -23,6 +23,7 @@ class Users(db.Model):
     def __repr__(self):
         return f'{self.username}'
 
+
 class FormEntry(db.Model):
     __tablename__ = 'form_entries'
 
@@ -43,6 +44,9 @@ class FormEntry(db.Model):
     estimated_delivery_date = db.Column(db.Date, nullable=False)  # tahmini_teslimat_tarihi
     delivery_note = db.Column(db.Text)  # teslimat_not
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class AidsOnVehicle(db.Model):
     __tablename__ = 'aids_on_vehicle'
@@ -54,3 +58,43 @@ class AidsOnVehicle(db.Model):
     size = db.Column(db.String(20))  # beden
 
     form_entry = db.relationship('FormEntry', backref=db.backref('aids_on_vehicle', lazy=True))
+
+
+class HelpType(db.Model):
+    __tablename__ = 'help_type'
+
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'description': self.description
+        }
+
+
+class Size(db.Model):
+    __tablename__ = 'size'
+
+    id = db.Column(db.Integer, primary_key=True)
+    size_type = db.Column(db.String(50), nullable=False)
+    category = db.Column(db.String(20), nullable=False, server_default="",
+                         server_check=db.text("category IN ('male-female', 'child')"))
+
+
+class City(db.Model):
+    __tablename__ = 'cities'
+
+    city_id = db.Column(db.Integer, primary_key=True)
+    city_name = db.Column(db.String(255), nullable=False)
+    districts = db.relationship('District', backref='city', lazy=True)
+
+
+class District(db.Model):
+    __tablename__ = 'districts'
+
+    district_id = db.Column(db.Integer, primary_key=True)
+    city_id = db.Column(db.Integer, db.ForeignKey('cities.city_id'), nullable=False)
+    district_name = db.Column(db.String(255), nullable=False)
