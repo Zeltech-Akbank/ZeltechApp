@@ -10,15 +10,25 @@
         justify-content: center;
         align-items: center;
         margin: 0 auto;
+        background-color: white;
     }
+    #legend {
+    position: absolute;
+    bottom: 70px;  /* Adjust this value to position the legend higher or lower */
+    right: 10px;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    z-index: 1000;  /* This ensures the legend is displayed above the map */
+}
 </style>
 
 {% block body %}
 <div class="card mt-4">
   <div class="card-body">
     <h5 class="card-title">Gelen Yardım Talepleri</h5>
-    <div id="map" style="height: 400px;"></div>
-    <div id="legend" style="background-color: white; padding: 10px; margin: 10px; border: 1px solid black;"></div>
+    <div id="map" style="height: 600px;"></div>
+    <div id="legend" style="border: 1px solid black; background-color: white"></div>
   </div>
 </div>
 
@@ -75,15 +85,6 @@
         </tbody>
     </table>
 
-    <nav>
-        <ul class="pagination">
-            {% for page_num in range(1, total_pages + 1) %}
-                <li class="page-item {% if request.args.get('page', 1, type=int) == page_num %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('app.maps_view', page=page_num) }}">{{ page_num }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </nav>
 </div>
 
 <script>

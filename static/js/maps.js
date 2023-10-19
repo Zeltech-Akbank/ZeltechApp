@@ -1,22 +1,46 @@
-function initMap() {
-    var myLatLng = pois[0];
+function computeDensityFocus(pois) {
+    let maxDensity = -Infinity;
+    let bestPoi = null;
 
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 17,
-        center: myLatLng
+    pois.forEach((poi1) => {
+        let count = 0;
+        pois.forEach((poi2) => {
+            // Compute Euclidean distance between two points
+            let distance = Math.sqrt(Math.pow(poi1.lat - poi2.lat, 2) + Math.pow(poi1.lng - poi2.lng, 2));
+            // If within a certain threshold, count it as nearby
+            if(distance < 0.01) { // 0.01 is an arbitrary threshold; adjust based on your needs
+                count++;
+            }
+        });
+        if(count > maxDensity) {
+            maxDensity = count;
+            bestPoi = poi1;
+        }
     });
 
-    var colors = {
-        'Hastane': "#FF5733",
-        'Eczane': "#33FF57",
-        'Park Alanı': "#57C7FF",
-        'Veteriner': "#FF57A7",
-        'Okul': "#A457FF"
-    };
+    return bestPoi;
+}
+
+function initMap() {
+    // Determine the POI with the highest density of nearby POIs
+    let highestDensityPoi = computeDensityFocus(pois);
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 14,
+        center: highestDensityPoi
+    });
+
+    // Color palette
+    var colorPalette = ["#FF5733", "#33FF57", "#57C7FF", "#FFC457", "#9400D3", "#4B0082", "#FFD700", "#20B2AA", "#FF6347", "#7FFF00"];
+    // Dynamically generate colors for each unique label
+    var uniqueLabels = [...new Set(pois.map(poi => poi.label))];
+    var colors = {};
+    uniqueLabels.forEach((label, index) => {
+        colors[label] = colorPalette[index % colorPalette.length];
+    });
 
     pois.forEach(function(poi) {
         var color = colors[poi.label];
-
         var circle = {
             path: google.maps.SymbolPath.CIRCLE,
             fillColor: color,
@@ -29,13 +53,12 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: poi,
             map: map,
-            icon: circle,
-            title: poi.label
+            icon: circle
         });
 
-        // Bilgi penceresi için
         var infowindow = new google.maps.InfoWindow({
-            content: poi.info
+            content: poi.info,
+            pixelOffset: new google.maps.Size(0,10) // Adjusts the position of the infowindow
         });
 
         marker.addListener('mouseover', function() {
@@ -46,7 +69,7 @@ function initMap() {
         });
     });
 
-    // Efsane (legend) oluşturalım
+    // Legend
     var legend = document.getElementById('legend');
     for (var key in colors) {
         var div = document.createElement('div');
@@ -54,63 +77,4 @@ function initMap() {
         legend.appendChild(div);
     }
     map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-}
-
-$(document).off('click', '.duzenle').on('click', '.duzenle', function(event) {
-    event.stopPropagation();
-
-    let id = $(this).data('id');
-    let teyit = $(`.teyit[data-id="${id}"]`).is(':checked') ? 'Evet' : 'Hayır';
-    let karsilandi = $(`.karsilandi[data-id="${id}"]`).is(':checked') ? 'Evet' : 'Hayır';
-
-    $.ajax({
-        url: `/durum-duzenle/${id}`,
-        method: 'POST',
-        data: {
-            teyit: teyit,
-            karsilandi: karsilandi
-        },
-        success: function(response) {
-            if (response.status === 'success') {
-                alert('Değişiklikler başarıyla kaydedildi!');
-            } else {
-                alert('Bir hata oluştu.');
-            }
-        }
-    });
-});
-
-
-function updateTable() {
-    var searchValue = $("#searchInput").val().toLowerCase();
-
-    var teyitChecked = $("#filterTeyit").is(':checked');
-    var karsilandiChecked = $("#filterKarsilandi").is(':checked');
-
-    $("tbody tr").each(function() {
-        var currentRow = $(this);
-        var teyitValue = currentRow.find('.teyit').prop('checked');
-        var karsilandiValue = currentRow.find('.karsilandi').prop('checked');
-
-        var rowText = currentRow.text().toLowerCase();
-        var showRow = true;
-
-        if (searchValue && !rowText.includes(searchValue)) {
-            showRow = false;
-        }
-
-        if (teyitChecked && !teyitValue) {
-            showRow = false;
-        }
-
-        if (karsilandiChecked && !karsilandiValue) {
-            showRow = false;
-        }
-
-        if (showRow) {
-            currentRow.show();
-        } else {
-            currentRow.hide();
-        }
-    });
 }

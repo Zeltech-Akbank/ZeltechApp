@@ -98,3 +98,27 @@ class District(db.Model):
     district_id = db.Column(db.Integer, primary_key=True)
     city_id = db.Column(db.Integer, db.ForeignKey('cities.city_id'), nullable=False)
     district_name = db.Column(db.String(255), nullable=False)
+
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+
+class Tweets(db.Model):
+    __tablename__ = 'tweets'
+
+    id = db.Column(db.Integer, primary_key=True)
+    tweet_content = db.Column(db.Text)
+    tag = db.Column(db.Text)
+    tweet_parser_json = db.Column(db.JSON)
+    city = db.Column(db.Text)
+    distincts = db.Column(db.Text)
+    neighbourhood = db.Column(db.Text)
+    phone = db.Column(db.Text)
+    address = db.Column(db.Text)
+    street_road = db.Column(db.Text)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    come_true = db.Column(db.Boolean, default=False) #ihtiyaç karşılandı.
+    confirmation = db.Column(db.Boolean, default=False) #teyit edildi.

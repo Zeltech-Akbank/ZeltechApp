@@ -5,8 +5,8 @@ from flask_socketio import SocketIO
 from . import chat, app
 from flask import jsonify
 from .controllers import Settings, ChatSession, RequestManager
-from .models import FormEntry, AidsOnVehicle, Users, db, HelpType, Size, City, District
-from sqlalchemy import MetaData
+from .models import FormEntry, AidsOnVehicle, Users, db, HelpType, Size, City, District, Tweets
+from sqlalchemy import MetaData, and_
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -193,31 +193,30 @@ def logistics_review():
 
 
 
-ihbarlar = [{"isim": f"Örnek İsim {i}", "konu": "Örnek Konu", "detay": "Örnek Detay", "teyit": "Hayır",
-                 "karsilandi": "Hayır", "id": i} for i in range(1, 3)]  # 50 örnek ihbar bu veritabanından gelcek.
-
-
 @app.route('/maps')
 def maps_view():
-    pois = [
-        {"lat": 39.9334, "lng": 32.8597, "label": "Hastane", "info": "Hastane A - Acil Servis"},
-        {"lat": 39.9335, "lng": 32.8598, "label": "Eczane", "info": "Eczane B - 24 Saat Açık"},
-        {"lat": 39.9333, "lng": 32.8596, "label": "Park Alanı", "info": "Park C - Çocuk Oyun Alanı Mevcut"},
-        {"lat": 39.9332, "lng": 32.8595, "label": "Veteriner", "info": "Veteriner D - Hayvan Bakımı"},
-        {"lat": 39.9336, "lng": 32.8599, "label": "Okul", "info": "Okul E - İlköğretim"}
-    ]
+    # Query only those tweets where both city and distincts are not null
+    # and tag is not "Alaksız İhbar"
+    tweets = Tweets.query.filter(
+        and_(
+            Tweets.city.isnot(None),
+            Tweets.city != 'nan',
+            Tweets.distincts.isnot(None),
+            Tweets.distincts != 'nan',
+            Tweets.tag != 'Alaksız İhbar'
+        )
+    ).all()
 
-    # Sayfa numarasını al
-    page = request.args.get('page', 1, type=int)
-    items_per_page = 10
+    pois = []
+    for tweet in tweets:
+        pois.append({
+            "lat": tweet.latitude,
+            "lng": tweet.longitude,
+            "label": tweet.tag,  # Tag'ı label olarak kullandım
+            "info": tweet.tweet_content
+        })
 
-    total_ihbarlar = len(ihbarlar)
-    start = (page - 1) * items_per_page
-    end = start + items_per_page
-    paginated_ihbarlar = ihbarlar[start:end]
-
-    return render_template('maps.html', pois=pois, ihbarlar=paginated_ihbarlar,
-                           total_pages=(total_ihbarlar // items_per_page) + 1)
+    return render_template('maps.html', pois=pois)
 
 
 @app.route('/durum-duzenle/<int:id>', methods=['POST'])
