@@ -100,11 +100,6 @@ class District(db.Model):
     district_name = db.Column(db.String(255), nullable=False)
 
 
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
-
-
 class Tweets(db.Model):
     __tablename__ = 'tweets'
 

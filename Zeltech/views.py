@@ -197,16 +197,18 @@ def logistics_review():
 def maps_view():
     # Query only those tweets where both city and distincts are not null
     # and tag is not "Alaksız İhbar"
-    tweets = Tweets.query.filter(
-        and_(
-            Tweets.city.isnot(None),
-            Tweets.city != 'nan',
-            Tweets.distincts.isnot(None),
-            Tweets.distincts != 'nan',
-            Tweets.tag != 'Alaksız İhbar'
-        )
-    ).all()
-
+    try:
+        tweets = Tweets.query.filter(
+            and_(
+                Tweets.city.isnot(None),
+                Tweets.city != 'nan',
+                Tweets.distincts.isnot(None),
+                Tweets.distincts != 'nan',
+                Tweets.tag != 'Alaksız İhbar'
+            )
+        ).all()
+    except Exception as ex:
+        print(ex)
     pois = []
     for tweet in tweets:
         pois.append({
